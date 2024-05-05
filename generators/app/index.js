@@ -23,15 +23,12 @@ module.exports = class extends Generator {
   \n    The folder to create the template in, absolute or relative to the current working directory.
   \n    Use '.' for the current folder. If not provided, defaults to a folder with the extension display name.\n
     ` });
-
-
-    this.option("shikai", {alias: "s", type: Boolean, description: "JS Template"});
-    this.option("bankai", {alias: "b", type: Boolean,  description: "TS Template"});
+    this.option("templateType", {alias: "t", type: String, description: "Type of template to choose from..."})
     this.option("templateName", {type: String, description: "Template display name."});
     this.option("description", {type: String, description: "Template description."});
     this.option("pkgManager", {type: String, description: "Template package manager"});
 
-    this.templateConfig = new Object.create(null);
+    this.templateConfig =  Object.create(null);
     this.templateConfig.installDependencies = false;
     this.abort = false;
 }
@@ -57,10 +54,17 @@ async initializing () {
 
 
 async prompting () {
-  
-   const templateType = type.options['templateType'];
-   if(templateType) {
 
+   const templateType = this.options['templateType'];
+   if(templateType) {
+    // const templateTypeId = 'tmpl-' + templateType;
+    const templateGenerator = templateGenerators.find(g => g.aliases.indexOf(templateType) !== -1);
+    if (templateGenerator) {
+        this.templateConfig.type = templateGenerator.id;
+    } else {
+        this.log("Invalid template type: " + templateType + '\nPossible types are: ' + templateGenerators.map(g => g.aliases.join(', ')).join(', '));
+        this.abort = true;
+    }
    }
 
    else {
@@ -91,7 +95,7 @@ const choices = templateGenerators.map((g) => {
 
    try {
     // prompt input for selected generator
-      await this.selectedGenerator.prompting(this, this.templateConfig);
+      await this.selectedGenerator?.prompting(this, this.templateConfig);
    }
    catch(e) {
     console.log(e);
@@ -114,9 +118,9 @@ async writing() {
  this.log(`Writing in ${this.destinationPath()}...`);
 
   // set generator source root: this zanpakuto repo's url...
-  this.sourceRoot(path.join(fileURLToPath(import.meta.url), "../templates/", this.templateConfig.type));
+  this.sourceRoot(path.join(__dirname, "../templates/", this.templateConfig.type));
 
-  await this.selectedGenerator.writing(this, this.templateConfig)
+  await this.selectedGenerator?.writing(this, this.templateConfig)
 }
 
  install () {
@@ -138,6 +142,7 @@ async writing() {
 end() {
   this.log(yosay("Thank you for using Zanpakuto!"));
   this.log("");
+
 }
 };
 

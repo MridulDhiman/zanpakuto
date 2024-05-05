@@ -1,11 +1,12 @@
 
 
-import Generator from "yeoman-generator";
-import * as prompts from "./prompts"
+
+const Generator = require("yeoman-generator")
+
+const prompts = require("./prompts");
 
 
-
-export default {
+module.exports =  {
     id: 'tmpl-express-js',
     aliases: ['tmpl-express-js', 'express-js'],
     name: 'New Express (JavaScript)',

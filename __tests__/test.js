@@ -16,6 +16,7 @@ describe('generator-zanpakuto:app', () => {
   });
 
   it('creates files', () => {
+    
     assert.file(['index.js', 'package.json']);
   });
 });

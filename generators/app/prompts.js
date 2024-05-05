@@ -1,15 +1,15 @@
 
 
-import path from "path";
-import Generator from "yeoman-generator";
 
 
+const path = require('path');
+const Generator = require("yeoman-generator")
 /**
  * @param {Generator} generator 
  * @param {Object} templateConfig 
  */
 
-export  function askForTemplateName(generator, templateConfig) {
+  function askForTemplateName(generator, templateConfig) {
 
     //@ts-ignore
     const templateName = generator.options['templateName'];
@@ -40,7 +40,7 @@ export  function askForTemplateName(generator, templateConfig) {
 
 }
 
-export  function askForDescription(generator, templateConfig) {
+  function askForDescription(generator, templateConfig) {
 
     const templateName = generator.options['description'];
 
@@ -61,7 +61,7 @@ export  function askForDescription(generator, templateConfig) {
     });
 }
 
-export  function askForPkgManager(generator, templateConfig) {
+  function askForPkgManager(generator, templateConfig) {
 
     const pkgManager = generator.options['pkgManager'];
 
@@ -93,4 +93,10 @@ export  function askForPkgManager(generator, templateConfig) {
     }).then((ans) => {
            templateConfig.pkgManager = ans.pkgManager
     });
+}
+
+module.exports  = {
+    askForDescription,
+    askForPkgManager,
+    askForTemplateName
 }

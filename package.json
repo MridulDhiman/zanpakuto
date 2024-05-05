@@ -9,36 +9,36 @@
     "url": "https://github.com/MridulDhiman"
   },
   "files": [
-    "generators"
+    "app"
   ],
-  "main": "generators/index.js",
+  "main": "generators/app/index.js",
   "keywords": [
     "template",
     "zanpakuto",
     "express",
     "bleach",
-    "shikai",
-    "bankai",
     "yeoman-generator"
   ],
   "devDependencies": {
-    "yeoman-test": "^1.7.0",
-    "yeoman-assert": "^3.1.1",
+    "@types/mocha": "^10.0.6",
     "eslint": "^6.6.0",
-    "prettier": "^1.19.1",
-    "husky": "^3.0.9",
-    "lint-staged": "^9.4.3",
     "eslint-config-prettier": "^6.6.0",
-    "eslint-plugin-prettier": "^3.1.1",
     "eslint-config-xo": "^0.27.2",
-    "jest": "^26.1.0"
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.0.9",
+    "jest": "^26.1.0",
+    "lint-staged": "^9.4.3",
+    "mocha": "^10.4.0",
+    "prettier": "^1.19.1",
+    "yeoman-assert": "^3.1.1",
+    "yeoman-test": "^1.7.0"
   },
   "engines": {
     "npm": ">= 4.0.0"
   },
   "dependencies": {
-    "yeoman-generator": "^3.1.1",
     "chalk": "^2.1.0",
+    "yeoman-generator": "^3.1.1",
     "yosay": "^2.0.2"
   },
   "jest": {
@@ -76,11 +76,10 @@
     ]
   },
   "scripts": {
-    "pretest": "eslint .",
     "test": "jest"
   },
   "repository": {
-    "type" : "git",
+    "type": "git",
     "url": "https://github.com/MridulDhiman/generator-zanpakuto.git"
   },
   "license": "MIT"
