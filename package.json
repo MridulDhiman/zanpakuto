@@ -19,6 +19,7 @@
     "bleach",
     "yeoman-generator"
   ],
+  "type": "module",
   "devDependencies": {
     "@types/mocha": "^10.0.6",
     "eslint": "^6.6.0",
@@ -38,6 +39,7 @@
   },
   "dependencies": {
     "chalk": "^2.1.0",
+    "lodash-es": "^4.17.21",
     "yeoman-generator": "^3.1.1",
     "yosay": "^2.0.2"
   },
