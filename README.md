@@ -17,7 +17,7 @@ yo zanpakuto
 ```
 
 
-## Functionalities: 
-- [x] Express hello world template
-- [ ] Express backend boilerplate
-- [ ] Next.js with nextauth boilerplate
+### Templates: 
+- [x] Express hello world template.
+- [x] Express mongoose boilerplate.
+- [ ] Next.js app router

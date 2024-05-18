@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "chalk": "^2.1.0",
+    "glob": "^10.3.15",
     "lodash-es": "^4.17.21",
     "yeoman-generator": "^3.1.1",
     "yosay": "^2.0.2"

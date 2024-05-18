@@ -5,6 +5,7 @@ import path from "path";
 import { fileURLToPath } from 'url';
 import {kebabCase} from 'lodash-es'
 import { exec } from 'child_process';
+import { globSync } from 'glob';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -34,9 +35,27 @@ async prompting () {
   type: "confirm",
   name:"confirm",
   message: "Do you want to use current directory as destination path: ",
- }]).then((answers) => {
+ },
+
+ {
+  type: "list",
+  name: "type", 
+  message: "What type of template you want to generate for yourself: ",
+  choices: [
+    {
+      name: "express-hello-world",
+      value: "express-hello-world"
+    },
+    {
+      name: "express-mongoose-boilerplate",
+      value: "express-mongoose-boilerplate"
+    }
+  ]
+ }
+]).then((answers) => {
   this.options.dirname = kebabCase(answers.name);
   this.options.confirm = answers.confirm;
+  this.options.type = answers.type;
 });
 }
 
@@ -50,16 +69,20 @@ if(this.options.confirm === false)
 
         this.log();
         this.log(`Writing in ${this.destinationPath()}...`);
-this.sourceRoot(path.join(__dirname, "templates", "express-hello-world"));
-this.fs.copy(this.templatePath('index.js'), this.destinationPath('index.js'));
-this.fs.copy(this.templatePath("package.json"), this.destinationPath("package.json"));
+this.sourceRoot(path.join(__dirname, "templates", this.options.type));
 
+
+globSync("**", {
+  cwd: this.sourceRoot()
+}).map((file) =>
+  this.fs.copy(this.templatePath(file), this.destinationPath(file))
+);
 
 }
 
 async install () {
   this.log.info("Installing npm packages...")
-await exec(`cd ${this.destinationPath()} && npm install`)
+await exec(`cd ${this.destinationPath()} && npm install && git init`)
 }
 
 end() {
@@ -67,6 +90,7 @@ end() {
   this.log("Template has been generated successfully...")
 }
 };
+
 
 
 
