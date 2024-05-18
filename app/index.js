@@ -80,9 +80,11 @@ globSync("**", {
 
 }
 
-async install () {
+ install () {
   this.log.info("Installing npm packages...")
-await exec(`cd ${this.destinationPath()} && npm install && git init`)
+//  exec(`cd ${this.destinationPath()} && npm install`)
+this.spawnCommandSync("cd", [this.destinationPath()]);
+this.spawnCommandSync("npm", ['install']);
 }
 
 end() {
