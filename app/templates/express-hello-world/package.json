@@ -1,5 +1,5 @@
 {
-  "name": "express-hello-world",
+  "name": <%- JSON.stringify(name) %>,
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
