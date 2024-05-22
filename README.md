@@ -71,3 +71,9 @@ npm create-next-app@latest
 
 4. You can specify whether to use typescript and /src directory according to the project.
 
+
+## Thank You
+
+You can star the repository, if you like my work.
+Contact me at: dhimanmridul91@gmail.com.
+
