@@ -1,0 +1,10 @@
+{
+  "name": "dep-versions",
+  "version": "1.0.0",
+  "description": "Dependency versions for zanpakuto templates",
+  "author": "Mridul Dhiman",
+  "dependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.12"
+  }
+}
