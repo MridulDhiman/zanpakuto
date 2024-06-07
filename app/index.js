@@ -6,20 +6,34 @@ import { fileURLToPath } from "url";
 import { kebabCase } from "lodash-es";
 import { globSync } from "glob";
 import { readFileSync } from "fs";
-import { getDependencyVersions } from "./env";
+import { getDependencyVersions } from "./env.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+let paths = [];
+
+const helperMappingFxn = (routes, parent = "") => {
+
+
+for(let route of routes) {
+    if(route.children) {
+       helperMappingFxn(route.children, route.path);
+    }
+    else {
+     paths.push({ "path": path.join(parent, route.path), "name": route.name ?? "Zanpakuto" });
+       return;
+    }
+}
+
+}
+
 const mappingConfigToPath = (data) => {
   const routes = data.routes;
 
-  const paths = [];
-  routes.forEach((route) => {
-    paths.push({ path: route.path, name: route.name });
-  });
-
-  return paths;
+  if(routes.length === 0) return [];
+ helperMappingFxn(routes, "");
+return paths;
 };
 
 export default class extends Generator {
@@ -170,7 +184,7 @@ export default class extends Generator {
       const out = readFileSync(this.destinationPath(routesConfigFile));
       const data = JSON.parse(out);
 
-      const paths = mappingConfigToPath(data);
+      const paths =  mappingConfigToPath(data);
 
       const hasTs = this.options.hasTs;
       const hasSrcDirectory = this.options.hasSrcDirectory;
@@ -180,7 +194,10 @@ export default class extends Generator {
       this.sourceRoot(path.join(__dirname, "templates", "nextjs-app-router"));
 
       const rootRoute = hasSrcDirectory ? "src/app" : "app";
-      paths.forEach((p) => {
+
+      this.log("Paths: ", paths);
+
+     if(paths.length>0) paths.forEach((p) => {
         let temp = p.path;
         if (temp.startsWith("/api"))
           sourceFile = hasTs ? "route.ts" : "route.js";
