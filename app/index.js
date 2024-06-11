@@ -7,33 +7,51 @@ import { kebabCase } from "lodash-es";
 import { globSync } from "glob";
 import { readFileSync } from "fs";
 import { getDependencyVersions } from "./env.js";
+import { slugGenerator } from "./utils/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let paths = [];
 
+/**
+ * 
+ * @param {string} path 
+ * @returns string
+ */
+const defaultRouteNameSetter = (path) => {
+let startIndex = 1;
+let endIndex = path.length;
+  if(path.endsWith("/")) {
+    endIndex--;
+  }
+
+const intermediateStep =  path.slice(startIndex, endIndex);
+let defaultName = intermediateStep.toLowerCase();
+defaultName[0].toUpperCase();
+return defaultName;
+}
+
 const helperMappingFxn = (routes, parent = "") => {
-
-
-for(let route of routes) {
-    if(route.children) {
-       helperMappingFxn(route.children, route.path);
+  for (let route of routes) {
+    if (route.children) {
+      helperMappingFxn(route.children, route.path);
+    } else {
+      paths.push({
+        path: path.join(parent, route.path),
+        name: route.name ?? defaultRouteNameSetter(route.path),
+      });
+      return;
     }
-    else {
-     paths.push({ "path": path.join(parent, route.path), "name": route.name ?? "Zanpakuto" });
-       return;
-    }
-}
-
-}
+  }
+};
 
 const mappingConfigToPath = (data) => {
   const routes = data.routes;
 
-  if(routes.length === 0) return [];
- helperMappingFxn(routes, "");
-return paths;
+  if (routes.length === 0) return [];
+  helperMappingFxn(routes, "");
+  return paths;
 };
 
 export default class extends Generator {
@@ -44,25 +62,24 @@ export default class extends Generator {
     this.option("template", {
       alias: "t",
       type: Boolean,
-      description: "Forge templates using zanpakuto"
+      description: "Forge templates using zanpakuto",
     });
     this.option("utility", {
       alias: "u",
       type: Boolean,
-      description: "Utilities using zanpakuto"
+      description: "Utilities using zanpakuto",
     });
     this.env.options.nodePackageManager = "npm";
     this.options.defaultPrompt = "template";
-    
   }
 
-  async initializing () {
+  async initializing() {
     const versions = await getDependencyVersions();
 
     this.options.dep = (depName) => {
       const version = versions[depName];
-      `${JSON.stringify(depName)} : ${JSON.stringify(version)}`
-    }
+      `${JSON.stringify(depName)} : ${JSON.stringify(version)}`;
+    };
   }
 
   async prompting() {
@@ -133,15 +150,13 @@ export default class extends Generator {
       },
     ];
 
-
-    
-    if(this.options["template"] || this.options["utility"]) {
-      const isTemplate = this.options['template'];
+    if (this.options["template"] || this.options["utility"]) {
+      const isTemplate = this.options["template"];
       allPrompts = [];
       this.options.defaultPrompt = isTemplate ? "template" : "utility";
     }
     await this.prompt(allPrompts).then(async (ans) => {
-     this.options.promptType = ans.promptType ?? this.options.defaultPrompt;
+      this.options.promptType = ans.promptType ?? this.options.defaultPrompt;
 
       if (this.options.promptType === "template") {
         await this.prompt(templatePrompts).then((answers) => {
@@ -184,7 +199,7 @@ export default class extends Generator {
       const out = readFileSync(this.destinationPath(routesConfigFile));
       const data = JSON.parse(out);
 
-      const paths =  mappingConfigToPath(data);
+      const paths = mappingConfigToPath(data);
 
       const hasTs = this.options.hasTs;
       const hasSrcDirectory = this.options.hasSrcDirectory;
@@ -197,17 +212,35 @@ export default class extends Generator {
 
       this.log("Paths: ", paths);
 
-     if(paths.length>0) paths.forEach((p) => {
-        let temp = p.path;
-        if (temp.startsWith("/api"))
-          sourceFile = hasTs ? "route.ts" : "route.js";
+      let isDynamicRoute = false;
+      let isApiRoute = false;
+      if (paths.length > 0)
+        paths.forEach((p) => {
+          let temp = p.path.trim();
 
-        this.fs.copyTpl(
-          this.templatePath(sourceFile),
-          this.destinationPath(path.join(rootRoute, p.path, sourceFile)),
-          { name: p.name }
-        );
-      });
+          if (temp.startsWith("/api")) {
+            isApiRoute = true;
+            sourceFile = hasTs ? "route.ts" : "route.js";
+          }
+
+        let slugs = slugGenerator(temp);
+
+          let dynamicTemplateFile = hasTs
+            ? "page-dynamic.tsx"
+            : "page-dynamic.jsx";
+
+          let templateFile =
+            !isDynamicRoute || isApiRoute ? sourceFile : dynamicTemplateFile;
+          let pathName = kebabCase(p.name.trim());
+
+          this.fs.copyTpl(
+            this.templatePath(templateFile),
+            this.destinationPath(path.join(rootRoute, p.path, sourceFile)),
+            { 
+              name: pathName
+             }
+          );
+        });
     }
   }
 
