@@ -7,7 +7,7 @@ import { kebabCase } from "lodash-es";
 import { globSync } from "glob";
 import { readFileSync } from "fs";
 import { getDependencyVersions } from "./env.js";
-import { slugGenerator } from "./utils/index.js";
+import { convertSlugsArrayToInterfaceTypes, slugGenerator } from "./utils/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -229,16 +229,25 @@ export default class extends Generator {
             ? "page-dynamic.tsx"
             : "page-dynamic.jsx";
 
+
+          let isDynamicFile = !isDynamicRoute || isApiRoute;
           let templateFile =
-            !isDynamicRoute || isApiRoute ? sourceFile : dynamicTemplateFile;
+            isDynamicFile ? sourceFile : dynamicTemplateFile;
+          
+          let data = {
+            name: pathName
+          }
+
+          if(slugs) {
+            data["slugs"] = convertSlugsArrayToInterfaceTypes(slugs)
+          }
+          
           let pathName = kebabCase(p.name.trim());
 
           this.fs.copyTpl(
             this.templatePath(templateFile),
             this.destinationPath(path.join(rootRoute, p.path, sourceFile)),
-            { 
-              name: pathName
-             }
+            data
           );
         });
     }

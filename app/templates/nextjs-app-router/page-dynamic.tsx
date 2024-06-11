@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
 
 interface ParamsType {
-  <%- slugs.forEach((slug)=> {
-  <%- <%= slug  %> : string;\n %>
-  }) %>
+  <%- slugs %>
 }
     
-export default function <%= name %>Page( {params} : { params: ParamsType } ) {
-    const slug = params[<%- JSON.stringify(slug) %>];
-        
+export default function <%= name %>Page( {params} : { params: ParamsType } ) {      
      return (
         <>
-           <%= name %> + {slug} page
+           <%= name %> + {JSON.stringify(params)} page
         </>
     );
 }

@@ -24,3 +24,13 @@ export const slugGenerator = (stre) => {
 };
 
 
+export const convertSlugsArrayToInterfaceTypes = (slugs) => {
+
+    slugs.map((slug) => {
+        return `${slug} : string;`
+    });
+
+    return slugs.join("\n");
+}
+
+
