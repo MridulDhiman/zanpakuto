@@ -3,7 +3,7 @@ import Generator from "yeoman-generator";
 import path from "path";
 
 import { fileURLToPath } from "url";
-import { kebabCase } from "lodash-es";
+import { camelCase } from "lodash-es";
 import { globSync } from "glob";
 import { readFileSync } from "fs";
 import { getDependencyVersions } from "./env.js";
@@ -224,6 +224,9 @@ export default class extends Generator {
           }
 
         let slugs = slugGenerator(temp);
+        if(slugs.length > 0 && !slugs.includes("")) {
+               isDynamicRoute = true;
+        }
 
           let dynamicTemplateFile = hasTs
             ? "page-dynamic.tsx"
@@ -234,15 +237,16 @@ export default class extends Generator {
           let templateFile =
             isDynamicFile ? sourceFile : dynamicTemplateFile;
           
+            let pathName = camelCase(p.name.trim());
           let data = {
-            name: pathName
+            "name": pathName,
+            "defaultName": p.name.trim()
           }
 
           if(slugs) {
             data["slugs"] = convertSlugsArrayToInterfaceTypes(slugs)
           }
           
-          let pathName = kebabCase(p.name.trim());
 
           this.fs.copyTpl(
             this.templatePath(templateFile),

@@ -1,11 +1,11 @@
 export const metadeta = {
-    title: <%- JSON.stringify(name) %>
+    title: <%- JSON.stringify(defaultName) %>
 }
 
 export default function <%= name %>Page() {
     return (
         <>
-        <%= name %>
+        <%= defaultName %>
         </>
         );
 }

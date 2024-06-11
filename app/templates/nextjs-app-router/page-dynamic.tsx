@@ -3,11 +3,15 @@ import type { Metadata } from "next";
 interface ParamsType {
   <%- slugs %>
 }
+
+export const metadata : Metadata = {
+    title: <%- JSON.stringify(defaultName) %>
+}
     
 export default function <%= name %>Page( {params} : { params: ParamsType } ) {      
      return (
         <>
-           <%= name %> + {JSON.stringify(params)} page
+           <%= defaultName %> + {JSON.stringify(params)} page
         </>
     );
 }

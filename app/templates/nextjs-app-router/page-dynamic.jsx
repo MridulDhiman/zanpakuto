@@ -1,11 +1,11 @@
 export const metadata = {
-    title: <%- JSON.stringify(name) %>
+    title: <%- JSON.stringify(defaultName) %>
     }
-    
+
 export default function <%= name %>Page({params}) { 
      return (
         <>
-           <%= name %> + {JSON.stringify(params)} page
+           <%= defaultName %> + {JSON.stringify(params)} page
         </>
     );
 }
