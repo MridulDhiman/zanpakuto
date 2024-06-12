@@ -41,3 +41,6 @@ export const idToTypeMap = new Map([
   [2.2, "nextjs-app-router"]
 ]);
 
+
+export const hasTsPromptMessage = "Would you like to use Typescript?";
+export const isESMPromptMessage = "Would you like to use ESM?";
