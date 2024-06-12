@@ -34,3 +34,10 @@ export const convertSlugsArrayToInterfaceTypes = (slugs) => {
 }
 
 
+export const idToTypeMap = new Map([
+  [1.1,  "express-hello-world"],
+  [1.2,  "express-mongoose-boilerplate"],
+  [2.1, "express-routes-utility"],
+  [2.2, "nextjs-app-router"]
+]);
+

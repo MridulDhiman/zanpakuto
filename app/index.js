@@ -133,6 +133,14 @@ export default class extends Generator {
 
     const utilityPrompts = [
       {
+        name: "express-hello-world",
+        value: "express-hello-world",
+      },
+      {
+        name: "express-mongoose-boilerplate",
+        value: "express-mongoose-boilerplate",
+      },
+      {
         type: "input",
         message: "Enter the next.js route config file name: ",
         name: "routesFileName",
