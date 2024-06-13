@@ -7,7 +7,8 @@ import { camelCase } from "lodash-es";
 import { globSync } from "glob";
 import { readFileSync } from "fs";
 import { getDependencyVersions } from "./env.js";
-import { convertSlugsArrayToInterfaceTypes, slugGenerator } from "./utils/index.js";
+import { convertSlugsArrayToInterfaceTypes, idToTypeMap, slugGenerator } from "./utils/index.js";
+import { globalPromptConfig } from "./prompt-configuration.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -83,103 +84,12 @@ export default class extends Generator {
   }
 
   async prompting() {
-    //message hai jo bhi, add to result...
-    const templatePrompts = [
-      {
-        type: "list",
-        name: "type",
-        message: "What type of template you want to generate for yourself: ",
-        choices: [
-          {
-            name: "express-hello-world",
-            value: "express-hello-world",
-          },
-          {
-            name: "express-mongoose-boilerplate",
-            value: "express-mongoose-boilerplate",
-          },
-        ],
-      },
-      {
-        type: "input",
-        name: "name",
-        message: "Enter Directory name: ",
-        default: "zanpakuto",
-      },
-      {
-        type: "confirm",
-        name: "confirm",
-        message: "Do you want to use current directory as destination path: ",
-      },
-    ];
-
-    let allPrompts = [
-      {
-        type: "list",
-        name: "promptType",
-        message: "Choose from below options: ",
-        choices: [
-          {
-            name: "template: Built-in templates in new/current directory.",
-            value: "template",
-          },
-          {
-            name: "utility: Built-in utilities in current directory.",
-            value: "utility",
-          },
-        ],
-      },
-    ];
-
-    const utilityPrompts = [
-      {
-        name: "express-hello-world",
-        value: "express-hello-world",
-      },
-      {
-        name: "express-mongoose-boilerplate",
-        value: "express-mongoose-boilerplate",
-      },
-      {
-        type: "input",
-        message: "Enter the next.js route config file name: ",
-        name: "routesFileName",
-        default: "routes.json",
-      },
-      {
-        type: "confirm",
-        message: "Would you like to use Typescript? ",
-        name: "hasTs",
-      },
-      {
-        type: "confirm",
-        message: "Would you like to use /src directory? ",
-        name: "hasSrcDirectory",
-      },
-    ];
-
-    if (this.options["template"] || this.options["utility"]) {
-      const isTemplate = this.options["template"];
-      allPrompts = [];
-      this.options.defaultPrompt = isTemplate ? "template" : "utility";
+    await globalPromptConfig.eval();
+    const answers =  globalPromptConfig.getAnswers();
+    this.options = {
+      ...this.options,
+      ...answers
     }
-    await this.prompt(allPrompts).then(async (ans) => {
-      this.options.promptType = ans.promptType ?? this.options.defaultPrompt;
-
-      if (this.options.promptType === "template") {
-        await this.prompt(templatePrompts).then((answers) => {
-          this.options.dirname = kebabCase(answers.name);
-          this.options.confirm = answers.confirm;
-          this.options.type = answers.type;
-        });
-      } else {
-        await this.prompt(utilityPrompts).then((answers) => {
-          this.options.routesFileName = answers.routesFileName;
-          this.options.hasTs = answers.hasTs;
-          this.options.hasSrcDirectory = answers.hasSrcDirectory;
-        });
-      }
-    });
   }
 
   writing() {
